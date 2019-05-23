@@ -31,30 +31,30 @@ extension AssetsCatalog.Parser {
     // swiftlint:disable:next closure_body_length
     return entries.map { entry in
       switch entry {
-      case .color(let name, let value):
+      case .color(let entryInfo):
         return [
           "type": "color",
-          "name": name,
-          "value": value
+          "name": entryInfo.name,
+          "value": entryInfo.value ?? ""
         ]
-      case .data(let name, let value):
+      case .data(let entryInfo):
         return [
           "type": "data",
-          "name": name,
-          "value": value
+          "name": entryInfo.name,
+          "value": entryInfo.value ?? ""
         ]
-      case .group(let name, let isNamespaced, let items):
+      case .group(let entryInfo, let isNamespaced, let items):
         return [
           "type": "group",
           "isNamespaced": "\(isNamespaced)",
-          "name": name,
+          "name": entryInfo.name,
           "items": structure(entries: items)
         ]
-      case .image(let name, let value):
+      case .image(let entryInfo):
         return [
           "type": "image",
-          "name": name,
-          "value": value
+          "name": entryInfo.name,
+          "value": entryInfo.value ?? ""
         ]
       }
     }

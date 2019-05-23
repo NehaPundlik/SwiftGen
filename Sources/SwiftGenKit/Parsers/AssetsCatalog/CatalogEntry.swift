@@ -9,10 +9,14 @@ import PathKit
 
 extension AssetsCatalog {
   enum Entry {
-    case color(name: String, value: String)
-    case data(name: String, value: String)
-    case group(name: String, isNamespaced: Bool, items: [Entry])
-    case image(name: String, value: String)
+    case color(entryInfo: EntryInfo)
+    case data(entryInfo: EntryInfo)
+    case group(entryInfo: EntryInfo, isNamespaced: Bool, items: [Entry])
+    case image(entryInfo: EntryInfo)
+  }
+  public struct EntryInfo {
+    var name: String
+    var value: String?
   }
 }
 
@@ -65,13 +69,13 @@ extension AssetsCatalog.Entry {
     switch Constants.Item(rawValue: type) {
     case .colorSet?:
       let name = path.lastComponentWithoutExtension
-      self = .color(name: name, value: "\(prefix)\(name)")
+      self = .color(entryInfo: AssetsCatalog.EntryInfo(name: name, value: "\(prefix)\(name)"))
     case .dataSet?:
       let name = path.lastComponentWithoutExtension
-      self = .data(name: name, value: "\(prefix)\(name)")
+      self = .data(entryInfo: AssetsCatalog.EntryInfo(name: name, value: "\(prefix)\(name)"))
     case .imageSet?:
       let name = path.lastComponentWithoutExtension
-      self = .image(name: name, value: "\(prefix)\(name)")
+      self = .image(entryInfo: AssetsCatalog.EntryInfo(name: name, value: "\(prefix)\(name)"))
     case nil:
       guard type.isEmpty else { return nil }
       let filename = path.lastComponent
@@ -79,7 +83,7 @@ extension AssetsCatalog.Entry {
       let subPrefix = isNamespaced ? "\(prefix)\(filename)/" : prefix
 
       self = .group(
-        name: filename,
+        entryInfo: AssetsCatalog.EntryInfo(name: filename, value: nil),
         isNamespaced: isNamespaced,
         items: AssetsCatalog.Catalog.process(folder: path, withPrefix: subPrefix)
       )
